@@ -8,7 +8,10 @@ import Dashboard from "./pages/Dashboard";
 import Students from "./pages/Students";
 import Teachers from "./pages/Teachers";
 import Classes from "./pages/Classes";
+import Subjects from "./pages/Subjects";
 import Attendance from "./pages/Attendance";
+import Notices from "./pages/Notices";
+import Fees from "./pages/Fees";
 import NotFound from "./pages/NotFound";
 import { useEffect } from "react";
 import { initializeSampleData } from "./lib/storage";
@@ -32,7 +35,10 @@ const App = () => {
               <Route path="/students" element={<Students />} />
               <Route path="/teachers" element={<Teachers />} />
               <Route path="/classes" element={<Classes />} />
+              <Route path="/subjects" element={<Subjects />} />
               <Route path="/attendance" element={<Attendance />} />
+              <Route path="/notices" element={<Notices />} />
+              <Route path="/fees" element={<Fees />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
