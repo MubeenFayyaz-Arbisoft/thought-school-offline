@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 import { 
   Users, 
   GraduationCap, 
@@ -174,18 +175,18 @@ export default function Dashboard() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors">
+            <Link to="/attendance" className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors block">
               <h3 className="font-semibold text-foreground">Mark Attendance</h3>
               <p className="text-sm text-muted-foreground">Record today's student attendance</p>
-            </div>
-            <div className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors">
+            </Link>
+            <Link to="/students" className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors block">
               <h3 className="font-semibold text-foreground">Add New Student</h3>
               <p className="text-sm text-muted-foreground">Register a new student</p>
-            </div>
-            <div className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors">
+            </Link>
+            <Link to="/attendance" className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors block">
               <h3 className="font-semibold text-foreground">View Reports</h3>
               <p className="text-sm text-muted-foreground">Generate attendance reports</p>
-            </div>
+            </Link>
           </div>
         </CardContent>
       </Card>

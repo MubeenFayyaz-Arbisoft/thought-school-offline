@@ -116,6 +116,36 @@ export const initializeSampleData = () => {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
+      {
+        id: '3',
+        name: 'Grade 3',
+        grade: '3',
+        sections: ['A', 'B', 'C'],
+        capacity: 35,
+        subjects: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: '4',
+        name: 'Grade 4',
+        grade: '4',
+        sections: ['A', 'B', 'C'],
+        capacity: 35,
+        subjects: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: '5',
+        name: 'Grade 5',
+        grade: '5',
+        sections: ['A', 'B', 'C'],
+        capacity: 35,
+        subjects: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
     ];
     LocalStorage.set('classes', sampleClasses);
   }
@@ -126,7 +156,7 @@ export const initializeSampleData = () => {
         id: '1',
         name: 'Mathematics',
         code: 'MATH',
-        classes: ['1', '2'],
+        classes: ['1', '2', '3', '4', '5'],
         creditHours: 4,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -135,12 +165,93 @@ export const initializeSampleData = () => {
         id: '2',
         name: 'English',
         code: 'ENG',
-        classes: ['1', '2'],
+        classes: ['1', '2', '3', '4', '5'],
         creditHours: 4,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: '3',
+        name: 'Science',
+        code: 'SCI',
+        classes: ['3', '4', '5'],
+        creditHours: 3,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        id: '4',
+        name: 'Social Studies',
+        code: 'SS',
+        classes: ['3', '4', '5'],
+        creditHours: 3,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
     ];
     LocalStorage.set('subjects', sampleSubjects);
+  }
+
+  if (LocalStorage.get<Student>('students').length === 0) {
+    const firstNames = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emma', 'James', 'Olivia', 'William', 'Sophia', 'Robert', 'Isabella', 'Joseph', 'Charlotte', 'Thomas', 'Amelia', 'Christopher', 'Mia', 'Charles', 'Harper', 'Daniel', 'Evelyn', 'Matthew', 'Abigail', 'Anthony', 'Emily', 'Mark', 'Elizabeth', 'Donald', 'Sofia', 'Steven', 'Avery', 'Paul', 'Ella', 'Andrew', 'Madison', 'Joshua', 'Scarlett', 'Kenneth', 'Victoria'];
+    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson'];
+    const classes = ['1', '2', '3', '4', '5'];
+    const sections = ['A', 'B', 'C'];
+
+    const sampleStudents: Student[] = [];
+    
+    for (let i = 1; i <= 200; i++) {
+      const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+      const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+      const classId = classes[Math.floor(Math.random() * classes.length)];
+      const section = sections[Math.floor(Math.random() * sections.length)];
+      
+      const student: Student = {
+        id: i.toString(),
+        name: `${firstName} ${lastName}`,
+        rollNumber: `STU${i.toString().padStart(3, '0')}`,
+        email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@ttsacademy.edu`,
+        phone: `+1-555-${Math.floor(Math.random() * 9000 + 1000)}`,
+        dateOfBirth: new Date(2010 + Math.floor(Math.random() * 8), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
+        address: `${Math.floor(Math.random() * 9999) + 1} ${['Main', 'Oak', 'Pine', 'Maple', 'Cedar'][Math.floor(Math.random() * 5)]} Street, City, State`,
+        classId,
+        section,
+        parentName: `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastName}`,
+        parentPhone: `+1-555-${Math.floor(Math.random() * 9000 + 1000)}`,
+        parentEmail: `${firstName.toLowerCase()}.parent@email.com`,
+        admissionDate: new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      
+      sampleStudents.push(student);
+    }
+    
+    LocalStorage.set('students', sampleStudents);
+  }
+
+  if (LocalStorage.get<Teacher>('teachers').length === 0) {
+    const teacherNames = ['Dr. Amanda Johnson', 'Prof. Michael Chen', 'Ms. Sarah Wilson', 'Mr. David Brown', 'Dr. Lisa Garcia', 'Prof. Robert Taylor', 'Ms. Jennifer Davis', 'Mr. Thomas Anderson', 'Dr. Maria Rodriguez', 'Prof. Christopher Lee'];
+    const subjects = ['Mathematics', 'English', 'Science', 'Social Studies'];
+    
+    const sampleTeachers: Teacher[] = teacherNames.map((name, index) => ({
+      id: (index + 1).toString(),
+      name,
+      email: `${name.toLowerCase().replace(/[^a-z]/g, '')}@ttsacademy.edu`,
+      phone: `+1-555-${Math.floor(Math.random() * 9000 + 1000)}`,
+      address: `${Math.floor(Math.random() * 999) + 1} Teacher Lane, City, State`,
+      dateOfBirth: new Date(1970 + Math.floor(Math.random() * 25), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
+      subjects: [subjects[index % subjects.length]],
+      classes: [(index % 5 + 1).toString()],
+      qualification: ['B.Ed', 'M.A.', 'Ph.D'][Math.floor(Math.random() * 3)],
+      experience: `${Math.floor(Math.random() * 15) + 5} years`,
+      joiningDate: new Date(2015 + Math.floor(Math.random() * 8), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
+      employeeId: `EMP${(index + 1).toString().padStart(3, '0')}`,
+      salary: 30000 + Math.floor(Math.random() * 20000),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }));
+    
+    LocalStorage.set('teachers', sampleTeachers);
   }
 };
