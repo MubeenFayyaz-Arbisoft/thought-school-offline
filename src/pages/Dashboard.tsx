@@ -315,7 +315,24 @@ export default function Dashboard() {
             <Link to="/attendance" className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors block">
               <h3 className="font-semibold text-foreground">Mark Attendance</h3>
               <p className="text-sm text-muted-foreground">Record today's student attendance</p>
-            </Link>
+          </Link>
+
+          <Link to="/expenses">
+            <Card className="border-border hover:bg-muted/50 transition-colors cursor-pointer">
+              <CardContent className="flex items-center justify-between p-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-warning/10 rounded-lg">
+                    <Receipt className="h-5 w-5 text-warning" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">Manage Expenses</h3>
+                    <p className="text-sm text-muted-foreground">Track school expenses</p>
+                  </div>
+                </div>
+                <Badge variant="outline">Expenses</Badge>
+              </CardContent>
+            </Card>
+          </Link>
             <Link to="/students" className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors block">
               <h3 className="font-semibold text-foreground">Add New Student</h3>
               <p className="text-sm text-muted-foreground">Register a new student</p>

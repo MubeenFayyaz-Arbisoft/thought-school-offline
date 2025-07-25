@@ -138,5 +138,27 @@ export interface FeeRecord {
   updatedAt: string;
 }
 
+export interface Expense {
+  id: string;
+  title: string;
+  description?: string;
+  category: 'classes' | 'books' | 'uniform' | 'notebooks' | 'diary' | 'stationary' | 'transport' | 'utilities' | 'maintenance' | 'other';
+  amount: number;
+  date: string;
+  month: string;
+  year: number;
+  spentBy: string; // Person who made the expense
+  approvedBy?: string;
+  paymentMethod: 'cash' | 'bank' | 'online' | 'cheque';
+  receipientType: 'school' | 'student' | 'teacher' | 'vendor';
+  studentGrade?: string;
+  studentClass?: string;
+  vendor?: string;
+  receiptNumber?: string;
+  status: 'pending' | 'approved' | 'paid' | 'rejected';
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Re-export additional types
 export * from './salary';

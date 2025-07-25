@@ -1,4 +1,4 @@
-import { Toaster } from "@/components/ui/toaster";
+import Classes from "./pages/Classes";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -7,16 +7,16 @@ import { DashboardLayout } from "./components/layout/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import Students from "./pages/Students";
 import Teachers from "./pages/Teachers";
-import Classes from "./pages/Classes";
+import Fees from "./pages/Fees";
 import Subjects from "./pages/Subjects";
 import Attendance from "./pages/Attendance";
+import Syllabus from "./pages/Syllabus";
 import Notices from "./pages/Notices";
-import Fees from "./pages/Fees";
-import Salary from "./pages/Salary";
+import Expenses from "./pages/Expenses";
 import SyllabusPage from "./pages/Syllabus";
 import NotFound from "./pages/NotFound";
-import { useEffect } from "react";
 import { initializeSampleData } from "./lib/storage";
+import { Toaster } from "@/components/ui/toaster";
 
 const queryClient = new QueryClient();
 
@@ -28,7 +28,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
+        </BrowserRouter>
         <Sonner />
         <BrowserRouter>
           <DashboardLayout>
@@ -39,18 +39,19 @@ const App = () => {
               <Route path="/classes" element={<Classes />} />
               <Route path="/subjects" element={<Subjects />} />
               <Route path="/attendance" element={<Attendance />} />
-              <Route path="/notices" element={<Notices />} />
-              <Route path="/fees" element={<Fees />} />
               <Route path="/salary" element={<Salary />} />
+              <Route path="/expenses" element={<Expenses />} />
+              <Route path="/fees" element={<Fees />} />
               <Route path="/syllabus" element={<SyllabusPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </DashboardLayout>
-        </BrowserRouter>
+              <Route path="/syllabus" element={<Syllabus />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </DashboardLayout>
       </TooltipProvider>
     </QueryClientProvider>
   );
 };
+}
 
 export default App;

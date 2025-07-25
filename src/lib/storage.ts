@@ -94,6 +94,17 @@ export const AttendanceStorage = {
   getByClass: (classId: string) => LocalStorage.get<AttendanceRecord>('attendance').filter(a => a.classId === classId),
 };
 
+export const ExpenseStorage = {
+  getAll: () => LocalStorage.get<import('@/types').Expense>('expenses'),
+  add: (expense: import('@/types').Expense) => LocalStorage.add('expenses', expense),
+  create: (expense: import('@/types').Expense) => LocalStorage.add('expenses', expense),
+  update: (id: string, expense: import('@/types').Expense) => LocalStorage.update('expenses', id, expense),
+  delete: (id: string) => LocalStorage.delete('expenses', id),
+  findById: (id: string) => LocalStorage.findById<import('@/types').Expense>('expenses', id),
+  getByMonth: (month: string) => LocalStorage.get<import('@/types').Expense>('expenses').filter(e => e.month === month),
+  getByCategory: (category: string) => LocalStorage.get<import('@/types').Expense>('expenses').filter(e => e.category === category),
+};
+
 // Initialize sample data if not exists
 export const initializeSampleData = () => {
   if (LocalStorage.get<Class>('classes').length === 0) {
