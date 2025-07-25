@@ -16,12 +16,16 @@ import {
 } from "lucide-react";
 import { Teacher } from "@/types";
 import { TeacherStorage, SubjectStorage, ClassStorage } from "@/lib/storage";
+import { TeacherForm } from "@/components/forms/TeacherForm";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Teachers() {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [filteredTeachers, setFilteredTeachers] = useState<Teacher[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedGrade, setSelectedGrade] = useState("all");
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
   const { toast } = useToast();
 
   const subjects = SubjectStorage.getAll();
@@ -33,7 +37,7 @@ export default function Teachers() {
 
   useEffect(() => {
     filterTeachers();
-  }, [teachers, searchTerm]);
+  }, [teachers, searchTerm, selectedGrade]);
 
   const loadTeachers = () => {
     const allTeachers = TeacherStorage.getAll();
@@ -51,6 +55,16 @@ export default function Teachers() {
       );
     }
 
+    if (selectedGrade !== "all") {
+      filtered = filtered.filter(teacher => {
+        const teacherClasses = teacher.classes.map(classId => {
+          const classData = classes.find(c => c.id === classId);
+          return classData?.grade || '';
+        });
+        return teacherClasses.includes(selectedGrade);
+      });
+    }
+
     setFilteredTeachers(filtered);
   };
 
@@ -63,6 +77,43 @@ export default function Teachers() {
         description: "Teacher deleted successfully",
       });
     }
+  };
+
+  const handleSaveTeacher = (teacherData: Omit<Teacher, 'id' | 'createdAt' | 'updatedAt'>) => {
+    if (editingTeacher) {
+      const updatedTeacher = {
+        ...teacherData,
+        id: editingTeacher.id,
+        createdAt: editingTeacher.createdAt,
+        updatedAt: new Date().toISOString(),
+      };
+      TeacherStorage.update(editingTeacher.id, updatedTeacher);
+      toast({
+        title: "Success",
+        description: "Teacher updated successfully",
+      });
+    } else {
+      const newTeacher = {
+        ...teacherData,
+        id: Date.now().toString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      TeacherStorage.add(newTeacher);
+      toast({
+        title: "Success",
+        description: "Teacher added successfully",
+      });
+    }
+    
+    loadTeachers();
+    setIsFormOpen(false);
+    setEditingTeacher(null);
+  };
+
+  const handleEditTeacher = (teacher: Teacher) => {
+    setEditingTeacher(teacher);
+    setIsFormOpen(true);
   };
 
   const getSubjectNames = (subjectIds: string[]) => {
@@ -92,23 +143,40 @@ export default function Teachers() {
             Manage teacher records and assignments
           </p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">
+        <Button 
+          onClick={() => setIsFormOpen(true)}
+          className="bg-primary hover:bg-primary/90"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add Teacher
         </Button>
       </div>
 
-      {/* Search */}
+      {/* Filters */}
       <Card className="border-border">
         <CardContent className="p-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Search by name, email, or employee ID..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Search by name, email, or employee ID..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <select
+              value={selectedGrade}
+              onChange={(e) => setSelectedGrade(e.target.value)}
+              className="px-3 py-2 border border-border rounded-md bg-background text-foreground"
+            >
+              <option value="all">All Grades</option>
+              {Array.from(new Set(classes.map(c => c.grade))).map((grade) => (
+                <option key={grade} value={grade}>
+                  Grade {grade}
+                </option>
+              ))}
+            </select>
           </div>
         </CardContent>
       </Card>
@@ -126,7 +194,11 @@ export default function Teachers() {
                   </Badge>
                 </div>
                 <div className="flex gap-1">
-                  <Button variant="ghost" size="sm">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleEditTeacher(teacher)}
+                  >
                     <Edit className="h-4 w-4" />
                   </Button>
                   <Button
@@ -211,6 +283,18 @@ export default function Teachers() {
             </p>
           </CardContent>
         </Card>
+      )}
+
+      {/* Teacher Form Modal */}
+      {isFormOpen && (
+        <TeacherForm
+          teacher={editingTeacher}
+          onSave={handleSaveTeacher}
+          onCancel={() => {
+            setIsFormOpen(false);
+            setEditingTeacher(null);
+          }}
+        />
       )}
     </div>
   );

@@ -6,7 +6,9 @@ import {
   ClipboardCheck,
   School,
   Bell,
-  CreditCard
+  CreditCard,
+  DollarSign,
+  FileText
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
@@ -62,6 +64,16 @@ const menuItems = [
     title: "Fees",
     url: "/fees",
     icon: CreditCard,
+  },
+  {
+    title: "Salary",
+    url: "/salary",
+    icon: DollarSign,
+  },
+  {
+    title: "Syllabus",
+    url: "/syllabus",
+    icon: FileText,
   },
 ];
 

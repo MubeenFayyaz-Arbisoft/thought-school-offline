@@ -12,6 +12,8 @@ import Subjects from "./pages/Subjects";
 import Attendance from "./pages/Attendance";
 import Notices from "./pages/Notices";
 import Fees from "./pages/Fees";
+import Salary from "./pages/Salary";
+import SyllabusPage from "./pages/Syllabus";
 import NotFound from "./pages/NotFound";
 import { useEffect } from "react";
 import { initializeSampleData } from "./lib/storage";
@@ -39,6 +41,8 @@ const App = () => {
               <Route path="/attendance" element={<Attendance />} />
               <Route path="/notices" element={<Notices />} />
               <Route path="/fees" element={<Fees />} />
+              <Route path="/salary" element={<Salary />} />
+              <Route path="/syllabus" element={<SyllabusPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

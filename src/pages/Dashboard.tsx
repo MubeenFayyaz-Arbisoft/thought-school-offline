@@ -10,7 +10,17 @@ import {
   TrendingUp,
   Calendar,
   ClipboardCheck,
-  UserCheck
+  UserCheck,
+  DollarSign,
+  FileText,
+  AlertCircle,
+  CheckCircle,
+  XCircle,
+  Clock,
+  BarChart3,
+  Target,
+  CreditCard,
+  Bell
 } from "lucide-react";
 import { StudentStorage, TeacherStorage, ClassStorage, SubjectStorage, AttendanceStorage } from "@/lib/storage";
 import { DashboardStats } from "@/types";
@@ -23,6 +33,13 @@ export default function Dashboard() {
     totalSubjects: 0,
     todayAttendanceRate: 0,
     monthlyAttendanceRate: 0,
+    totalFeesCollected: 0,
+    pendingFees: 0,
+    overdueNotices: 0,
+    activeSyllabus: 0,
+    unpaidSalaries: 0,
+    studentsPresent: 0,
+    studentsAbsent: 0,
   });
 
   useEffect(() => {
@@ -45,6 +62,14 @@ export default function Dashboard() {
     const presentMonth = monthlyAttendance.filter(a => a.status === 'present').length;
     const monthlyAttendanceRate = monthlyAttendance.length > 0 ? (presentMonth / monthlyAttendance.length) * 100 : 0;
 
+    // Calculate additional stats
+    const studentsPresent = todayAttendance.filter(a => a.status === 'present').length;
+    const studentsAbsent = todayAttendance.filter(a => a.status === 'absent').length;
+    
+    // Mock fee calculations (in real app, this would come from fee storage)
+    const totalFeesCollected = students.length * 5000; // Mock calculation
+    const pendingFees = students.length * 1000; // Mock calculation
+    
     setStats({
       totalStudents: students.length,
       totalTeachers: teachers.length,
@@ -52,6 +77,13 @@ export default function Dashboard() {
       totalSubjects: subjects.length,
       todayAttendanceRate: Math.round(todayAttendanceRate),
       monthlyAttendanceRate: Math.round(monthlyAttendanceRate),
+      totalFeesCollected,
+      pendingFees,
+      overdueNotices: 2, // Mock data
+      activeSyllabus: subjects.length, // Mock calculation
+      unpaidSalaries: 3, // Mock data
+      studentsPresent,
+      studentsAbsent,
     });
   }, []);
 
@@ -100,6 +132,61 @@ export default function Dashboard() {
       icon: TrendingUp,
       color: stats.monthlyAttendanceRate >= 80 ? "text-success" : stats.monthlyAttendanceRate >= 60 ? "text-warning" : "text-destructive",
       bgColor: stats.monthlyAttendanceRate >= 80 ? "bg-success/10" : stats.monthlyAttendanceRate >= 60 ? "bg-warning/10" : "bg-destructive/10",
+    },
+  ];
+
+  const financialCards = [
+    {
+      title: "Total Fees Collected",
+      value: `₹${stats.totalFeesCollected.toLocaleString()}`,
+      icon: DollarSign,
+      color: "text-success",
+      bgColor: "bg-success/10",
+    },
+    {
+      title: "Pending Fees",
+      value: `₹${stats.pendingFees.toLocaleString()}`,
+      icon: CreditCard,
+      color: "text-warning",
+      bgColor: "bg-warning/10",
+    },
+    {
+      title: "Unpaid Salaries",
+      value: stats.unpaidSalaries,
+      icon: AlertCircle,
+      color: "text-destructive",
+      bgColor: "bg-destructive/10",
+    },
+    {
+      title: "Active Syllabus",
+      value: stats.activeSyllabus,
+      icon: Target,
+      color: "text-info",
+      bgColor: "bg-info/10",
+    },
+  ];
+
+  const dailyMonitoringCards = [
+    {
+      title: "Students Present",
+      value: stats.studentsPresent,
+      icon: CheckCircle,
+      color: "text-success",
+      bgColor: "bg-success/10",
+    },
+    {
+      title: "Students Absent",
+      value: stats.studentsAbsent,
+      icon: XCircle,
+      color: "text-destructive",
+      bgColor: "bg-destructive/10",
+    },
+    {
+      title: "Pending Notices",
+      value: stats.overdueNotices,
+      icon: Bell,
+      color: "text-warning",
+      bgColor: "bg-warning/10",
     },
   ];
 
@@ -165,6 +252,56 @@ export default function Dashboard() {
         ))}
       </div>
 
+      {/* Financial Overview */}
+      <div>
+        <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+          <BarChart3 className="h-6 w-6" />
+          Financial Overview
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {financialCards.map((card) => (
+            <Card key={card.title} className="transition-all duration-200 hover:shadow-lg border-border">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {card.title}
+                </CardTitle>
+                <div className={`p-2 rounded-lg ${card.bgColor}`}>
+                  <card.icon className={`h-5 w-5 ${card.color}`} />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-foreground">{card.value}</div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Daily Monitoring */}
+      <div>
+        <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+          <Clock className="h-6 w-6" />
+          Today's Monitoring
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {dailyMonitoringCards.map((card) => (
+            <Card key={card.title} className="transition-all duration-200 hover:shadow-lg border-border">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {card.title}
+                </CardTitle>
+                <div className={`p-2 rounded-lg ${card.bgColor}`}>
+                  <card.icon className={`h-5 w-5 ${card.color}`} />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-foreground">{card.value}</div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
       {/* Quick Actions */}
       <Card className="border-border">
         <CardHeader>
@@ -174,7 +311,7 @@ export default function Dashboard() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link to="/attendance" className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors block">
               <h3 className="font-semibold text-foreground">Mark Attendance</h3>
               <p className="text-sm text-muted-foreground">Record today's student attendance</p>
@@ -182,6 +319,26 @@ export default function Dashboard() {
             <Link to="/students" className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors block">
               <h3 className="font-semibold text-foreground">Add New Student</h3>
               <p className="text-sm text-muted-foreground">Register a new student</p>
+            </Link>
+            <Link to="/teachers" className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors block">
+              <h3 className="font-semibold text-foreground">Add New Teacher</h3>
+              <p className="text-sm text-muted-foreground">Register a new teacher</p>
+            </Link>
+            <Link to="/fees" className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors block">
+              <h3 className="font-semibold text-foreground">Manage Fees</h3>
+              <p className="text-sm text-muted-foreground">Handle student fee records</p>
+            </Link>
+            <Link to="/notices" className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors block">
+              <h3 className="font-semibold text-foreground">Post Notices</h3>
+              <p className="text-sm text-muted-foreground">Publish announcements</p>
+            </Link>
+            <Link to="/subjects" className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors block">
+              <h3 className="font-semibold text-foreground">Manage Subjects</h3>
+              <p className="text-sm text-muted-foreground">Subject assignments</p>
+            </Link>
+            <Link to="/classes" className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors block">
+              <h3 className="font-semibold text-foreground">Manage Classes</h3>
+              <p className="text-sm text-muted-foreground">Class management</p>
             </Link>
             <Link to="/attendance" className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors block">
               <h3 className="font-semibold text-foreground">View Reports</h3>

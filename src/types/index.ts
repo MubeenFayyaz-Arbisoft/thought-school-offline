@@ -77,4 +77,14 @@ export interface DashboardStats {
   totalSubjects: number;
   todayAttendanceRate: number;
   monthlyAttendanceRate: number;
+  totalFeesCollected: number;
+  pendingFees: number;
+  overdueNotices: number;
+  activeSyllabus: number;
+  unpaidSalaries: number;
+  studentsPresent: number;
+  studentsAbsent: number;
 }
+
+// Re-export additional types
+export * from './salary';
