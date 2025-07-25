@@ -14,6 +14,9 @@ export interface Student {
   admissionDate: string;
   rollNumber: string;
   bloodGroup?: string;
+  monthlyFee: number;
+  feeStatus: 'paid' | 'pending' | 'overdue';
+  lastFeePaidDate?: string;
   createdAt: string;
   updatedAt: string;
 }

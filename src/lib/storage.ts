@@ -219,6 +219,10 @@ export const initializeSampleData = () => {
       const classId = classes[Math.floor(Math.random() * classes.length)];
       const section = sections[Math.floor(Math.random() * sections.length)];
       
+      const monthlyFee = [1000, 1200, 1500, 1800, 2000][Math.floor(Math.random() * 5)];
+      const feeStatuses = ['paid', 'pending', 'overdue'] as const;
+      const feeStatus = feeStatuses[Math.floor(Math.random() * feeStatuses.length)];
+      
       const student: Student = {
         id: i.toString(),
         name: `${firstName} ${lastName}`,
@@ -234,6 +238,9 @@ export const initializeSampleData = () => {
         parentPhone: `+1-555-${Math.floor(Math.random() * 9000 + 1000)}`,
         parentEmail: `${firstName.toLowerCase()}.parent@email.com`,
         admissionDate: new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
+        monthlyFee,
+        feeStatus,
+        lastFeePaidDate: feeStatus === 'paid' ? new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : undefined,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };

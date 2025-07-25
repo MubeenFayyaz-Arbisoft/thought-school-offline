@@ -220,10 +220,25 @@ export default function Students() {
                   {getClassName(student.classId)} - {student.section}
                 </Badge>
               </div>
-              <div className="text-sm text-muted-foreground">
-                <strong>Parent:</strong> {student.parentName}
-                <br />
-                <strong>Contact:</strong> {student.parentPhone}
+              <div className="text-sm text-muted-foreground space-y-1">
+                <div>
+                  <strong>Parent:</strong> {student.parentName}
+                </div>
+                <div>
+                  <strong>Contact:</strong> {student.parentPhone}
+                </div>
+                <div className="flex items-center justify-between pt-2 border-t">
+                  <span><strong>Monthly Fee:</strong> ₹{student.monthlyFee}</span>
+                  <Badge 
+                    variant={
+                      student.feeStatus === 'paid' ? 'default' : 
+                      student.feeStatus === 'pending' ? 'secondary' : 'destructive'
+                    }
+                    className="text-xs"
+                  >
+                    {student.feeStatus}
+                  </Badge>
+                </div>
               </div>
             </CardContent>
           </Card>

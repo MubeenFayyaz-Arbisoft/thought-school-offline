@@ -20,7 +20,8 @@ import {
   BarChart3,
   Target,
   CreditCard,
-  Bell
+  Bell,
+  Receipt
 } from "lucide-react";
 import { StudentStorage, TeacherStorage, ClassStorage, SubjectStorage, AttendanceStorage } from "@/lib/storage";
 import { DashboardStats } from "@/types";
@@ -317,22 +318,15 @@ export default function Dashboard() {
               <p className="text-sm text-muted-foreground">Record today's student attendance</p>
           </Link>
 
-          <Link to="/expenses">
-            <Card className="border-border hover:bg-muted/50 transition-colors cursor-pointer">
-              <CardContent className="flex items-center justify-between p-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-warning/10 rounded-lg">
-                    <Receipt className="h-5 w-5 text-warning" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">Manage Expenses</h3>
-                    <p className="text-sm text-muted-foreground">Track school expenses</p>
-                  </div>
+            <Link to="/expenses" className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors block">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-warning/10 rounded-lg">
+                  <Receipt className="h-5 w-5 text-warning" />
                 </div>
-                <Badge variant="outline">Expenses</Badge>
-              </CardContent>
-            </Card>
-          </Link>
+                <h3 className="font-semibold text-foreground">Manage Expenses</h3>
+              </div>
+              <p className="text-sm text-muted-foreground">Track school expenses and budgets</p>
+            </Link>
             <Link to="/students" className="p-4 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors block">
               <h3 className="font-semibold text-foreground">Add New Student</h3>
               <p className="text-sm text-muted-foreground">Register a new student</p>

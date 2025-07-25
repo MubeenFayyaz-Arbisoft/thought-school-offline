@@ -12,11 +12,13 @@ import {
   Phone,
   Mail,
   Calendar,
-  BookOpen
+  BookOpen,
+  ClipboardCheck
 } from "lucide-react";
 import { Teacher } from "@/types";
 import { TeacherStorage, SubjectStorage, ClassStorage } from "@/lib/storage";
 import { TeacherForm } from "@/components/forms/TeacherForm";
+import { TeacherAttendanceForm } from "@/components/forms/TeacherAttendanceForm";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Teachers() {
@@ -26,6 +28,8 @@ export default function Teachers() {
   const [selectedGrade, setSelectedGrade] = useState("all");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
+  const [isAttendanceFormOpen, setIsAttendanceFormOpen] = useState(false);
+  const [selectedTeacherForAttendance, setSelectedTeacherForAttendance] = useState<string>("");
   const { toast } = useToast();
 
   const subjects = SubjectStorage.getAll();
@@ -77,6 +81,16 @@ export default function Teachers() {
         description: "Teacher deleted successfully",
       });
     }
+  };
+
+  const handleMarkAttendance = (teacherId: string) => {
+    setSelectedTeacherForAttendance(teacherId);
+    setIsAttendanceFormOpen(true);
+  };
+
+  const handleAttendanceSave = () => {
+    setIsAttendanceFormOpen(false);
+    setSelectedTeacherForAttendance("");
   };
 
   const handleSaveTeacher = (teacherData: Omit<Teacher, 'id' | 'createdAt' | 'updatedAt'>) => {
@@ -197,6 +211,14 @@ export default function Teachers() {
                   <Button
                     variant="ghost"
                     size="sm"
+                    onClick={() => handleMarkAttendance(teacher.id)}
+                    title="Mark Attendance"
+                  >
+                    <ClipboardCheck className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => handleEditTeacher(teacher)}
                   >
                     <Edit className="h-4 w-4" />
@@ -293,6 +315,18 @@ export default function Teachers() {
           onCancel={() => {
             setIsFormOpen(false);
             setEditingTeacher(null);
+          }}
+        />
+      )}
+
+      {/* Teacher Attendance Form Modal */}
+      {isAttendanceFormOpen && selectedTeacherForAttendance && (
+        <TeacherAttendanceForm
+          teacherId={selectedTeacherForAttendance}
+          onSave={handleAttendanceSave}
+          onCancel={() => {
+            setIsAttendanceFormOpen(false);
+            setSelectedTeacherForAttendance("");
           }}
         />
       )}

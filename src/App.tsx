@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Classes from "./pages/Classes";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,8 +14,8 @@ import Attendance from "./pages/Attendance";
 import Syllabus from "./pages/Syllabus";
 import Notices from "./pages/Notices";
 import Expenses from "./pages/Expenses";
-import SyllabusPage from "./pages/Syllabus";
 import NotFound from "./pages/NotFound";
+import Salary from "./pages/Salary";
 import { initializeSampleData } from "./lib/storage";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -28,8 +29,6 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        </BrowserRouter>
-        <Sonner />
         <BrowserRouter>
           <DashboardLayout>
             <Routes>
@@ -42,16 +41,17 @@ const App = () => {
               <Route path="/salary" element={<Salary />} />
               <Route path="/expenses" element={<Expenses />} />
               <Route path="/fees" element={<Fees />} />
-              <Route path="/syllabus" element={<SyllabusPage />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="/notices" element={<Notices />} />
               <Route path="/syllabus" element={<Syllabus />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </DashboardLayout>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </DashboardLayout>
+        </BrowserRouter>
+        <Sonner />
+        <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
   );
 };
-}
 
 export default App;

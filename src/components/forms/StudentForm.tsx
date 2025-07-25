@@ -29,6 +29,9 @@ export function StudentForm({ student, onSave, onCancel }: StudentFormProps) {
     admissionDate: student?.admissionDate || new Date().toISOString().split('T')[0],
     rollNumber: student?.rollNumber || '',
     bloodGroup: student?.bloodGroup || '',
+    monthlyFee: student?.monthlyFee || 1000,
+    feeStatus: student?.feeStatus || 'pending' as const,
+    lastFeePaidDate: student?.lastFeePaidDate || '',
   });
 
   const classes = ClassStorage.getAll();
@@ -160,6 +163,43 @@ export function StudentForm({ student, onSave, onCancel }: StudentFormProps) {
                   onChange={handleChange}
                 />
               </div>
+              <div>
+                <Label htmlFor="monthlyFee">Monthly Fee (₹)</Label>
+                <Input
+                  id="monthlyFee"
+                  name="monthlyFee"
+                  type="number"
+                  value={formData.monthlyFee}
+                  onChange={handleChange}
+                  min="0"
+                />
+              </div>
+              <div>
+                <Label htmlFor="feeStatus">Fee Status</Label>
+                <select
+                  id="feeStatus"
+                  name="feeStatus"
+                  value={formData.feeStatus}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="paid">Paid</option>
+                  <option value="overdue">Overdue</option>
+                </select>
+              </div>
+              {formData.feeStatus === 'paid' && (
+                <div>
+                  <Label htmlFor="lastFeePaidDate">Last Fee Paid Date</Label>
+                  <Input
+                    id="lastFeePaidDate"
+                    name="lastFeePaidDate"
+                    type="date"
+                    value={formData.lastFeePaidDate}
+                    onChange={handleChange}
+                  />
+                </div>
+              )}
             </div>
 
             <div>
