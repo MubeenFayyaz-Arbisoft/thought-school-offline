@@ -39,7 +39,7 @@ export function ClassForm({ isOpen, onClose, classToEdit, onSave }: ClassFormPro
         grade: classToEdit.grade,
         sections: classToEdit.sections,
         capacity: classToEdit.capacity.toString(),
-        classTeacherId: classToEdit.classTeacherId || "",
+        classTeacherId: classToEdit.classTeacherId || "none",
         subjects: classToEdit.subjects
       });
     } else {
@@ -48,7 +48,7 @@ export function ClassForm({ isOpen, onClose, classToEdit, onSave }: ClassFormPro
         grade: "",
         sections: [],
         capacity: "",
-        classTeacherId: "",
+        classTeacherId: "none",
         subjects: []
       });
     }
@@ -72,7 +72,7 @@ export function ClassForm({ isOpen, onClose, classToEdit, onSave }: ClassFormPro
       grade: formData.grade,
       sections: formData.sections,
       capacity: parseInt(formData.capacity),
-      classTeacherId: formData.classTeacherId || undefined,
+      classTeacherId: formData.classTeacherId === "none" ? undefined : formData.classTeacherId,
       subjects: formData.subjects,
       createdAt: classToEdit?.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -179,7 +179,7 @@ export function ClassForm({ isOpen, onClose, classToEdit, onSave }: ClassFormPro
                   <SelectValue placeholder="Select teacher" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">No teacher assigned</SelectItem>
+                  <SelectItem value="none">No teacher assigned</SelectItem>
                   {teachers.map((teacher) => (
                     <SelectItem key={teacher.id} value={teacher.id}>
                       {teacher.name}
