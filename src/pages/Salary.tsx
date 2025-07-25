@@ -60,10 +60,52 @@ export default function Salary() {
     if (editingSalary) {
       setSalaryRecords(prev => prev.map(s => s.id === salary.id ? salary : s));
     } else {
-      setSalaryRecords(prev => [...prev, salary]);
+      setSalaryRecords(prev => [salary, ...prev]);
     }
     setIsFormOpen(false);
     setEditingSalary(null);
+  };
+
+  const handleGeneratePayslip = (record: SalaryRecord) => {
+    const teacher = teachers.find(t => t.id === record.teacherId);
+    const teacherName = teacher?.name || 'Unknown Teacher';
+    const employeeId = teacher?.employeeId || 'N/A';
+    
+    // Create payslip content
+    const payslipContent = `
+PAYSLIP FOR ${record.month}
+============================
+Employee: ${teacherName}
+Employee ID: ${employeeId}
+Month: ${record.month}
+
+EARNINGS:
+Basic Salary: ₹${record.basicSalary.toLocaleString()}
+Allowances: ₹${(record.allowances || 0).toLocaleString()}
+
+DEDUCTIONS:
+Deductions: ₹${(record.deductions || 0).toLocaleString()}
+
+NET SALARY: ₹${record.totalSalary.toLocaleString()}
+Status: ${record.status.toUpperCase()}
+${record.paidDate ? `Paid Date: ${new Date(record.paidDate).toLocaleDateString()}` : ''}
+    `;
+
+    // Create and download payslip
+    const blob = new Blob([payslipContent], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Payslip_${teacherName.replace(/\s+/g, '_')}_${record.month}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+
+    toast({
+      title: "Success",
+      description: "Payslip generated and downloaded successfully",
+    });
   };
 
   const handleDeleteSalary = (id: string) => {
@@ -304,7 +346,7 @@ export default function Salary() {
                         Mark as Paid
                       </Button>
                     )}
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={() => handleGeneratePayslip(record)}>
                       Generate Payslip
                     </Button>
                   </div>

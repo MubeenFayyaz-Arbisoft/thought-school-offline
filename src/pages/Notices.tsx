@@ -70,7 +70,7 @@ export default function Notices() {
     if (editingNotice) {
       setNotices(prev => prev.map(n => n.id === notice.id ? notice : n));
     } else {
-      setNotices(prev => [...prev, notice]);
+      setNotices(prev => [notice, ...prev]);
     }
     setIsFormOpen(false);
     setEditingNotice(null);

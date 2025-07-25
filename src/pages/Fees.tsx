@@ -108,7 +108,7 @@ export default function Fees() {
     if (editingFee) {
       setFeeRecords(prev => prev.map(f => f.id === fee.id ? fee : f));
     } else {
-      setFeeRecords(prev => [...prev, fee]);
+      setFeeRecords(prev => [fee, ...prev]);
     }
     setIsFormOpen(false);
     setEditingFee(null);

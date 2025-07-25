@@ -85,10 +85,27 @@ export default function SyllabusPage() {
     if (editingSyllabus) {
       setSyllabusRecords(prev => prev.map(s => s.id === syllabus.id ? syllabus : s));
     } else {
-      setSyllabusRecords(prev => [...prev, syllabus]);
+      setSyllabusRecords(prev => [syllabus, ...prev]);
     }
     setIsFormOpen(false);
     setEditingSyllabus(null);
+  };
+
+  const handleUpdateProgress = (record: Syllabus) => {
+    const newProgress = prompt(`Update progress for "${record.title}" (0-100):`, record.progressPercentage.toString());
+    
+    if (newProgress !== null) {
+      const progressValue = parseInt(newProgress);
+      if (!isNaN(progressValue) && progressValue >= 0 && progressValue <= 100) {
+        updateProgress(record.id, progressValue);
+      } else {
+        toast({
+          title: "Error",
+          description: "Please enter a valid progress value between 0 and 100",
+          variant: "destructive",
+        });
+      }
+    }
   };
 
   const handleDeleteSyllabus = (id: string) => {
@@ -380,7 +397,7 @@ export default function SyllabusPage() {
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
-                  <Button size="sm" variant="outline">
+                  <Button size="sm" variant="outline" onClick={() => handleUpdateProgress(record)}>
                     Update Progress
                   </Button>
                 </div>

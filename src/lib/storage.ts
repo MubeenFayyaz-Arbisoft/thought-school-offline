@@ -22,7 +22,7 @@ export class LocalStorage {
 
   static add<T extends { id: string }>(key: string, item: T): void {
     const items = this.get<T>(key);
-    items.push(item);
+    items.unshift(item);
     this.set(key, items);
   }
 
