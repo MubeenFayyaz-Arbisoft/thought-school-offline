@@ -13,17 +13,22 @@ import {
   Clock,
   CheckCircle,
   User,
-  School
+  School,
+  Edit,
+  Trash2
 } from "lucide-react";
 import { SubjectStorage, TeacherStorage, ClassStorage } from "@/lib/storage";
 import { Subject, Teacher, Class, Syllabus } from "@/types";
 import { useToast } from "@/hooks/use-toast";
+import { SyllabusForm } from "@/components/forms/SyllabusForm";
 
 export default function SyllabusPage() {
   const [syllabusRecords, setSyllabusRecords] = useState<Syllabus[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [gradeFilter, setGradeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingSyllabus, setEditingSyllabus] = useState<Syllabus | null>(null);
   const { toast } = useToast();
 
   const subjects = SubjectStorage.getAll();
@@ -74,6 +79,26 @@ export default function SyllabusPage() {
     });
     
     setSyllabusRecords(sampleSyllabus);
+  };
+
+  const handleSaveSyllabus = (syllabus: Syllabus) => {
+    if (editingSyllabus) {
+      setSyllabusRecords(prev => prev.map(s => s.id === syllabus.id ? syllabus : s));
+    } else {
+      setSyllabusRecords(prev => [...prev, syllabus]);
+    }
+    setIsFormOpen(false);
+    setEditingSyllabus(null);
+  };
+
+  const handleDeleteSyllabus = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this syllabus?")) {
+      setSyllabusRecords(prev => prev.filter(s => s.id !== id));
+      toast({
+        title: "Success",
+        description: "Syllabus deleted successfully",
+      });
+    }
   };
 
   const filteredRecords = syllabusRecords.filter(record => {
@@ -163,7 +188,7 @@ export default function SyllabusPage() {
             Track and manage curriculum progress and targets
           </p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">
+        <Button onClick={() => setIsFormOpen(true)} className="bg-primary hover:bg-primary/90">
           <Plus className="h-4 w-4 mr-2" />
           Add Syllabus
         </Button>
@@ -344,8 +369,16 @@ export default function SyllabusPage() {
                 </div>
 
                 <div className="flex gap-2 pt-2">
-                  <Button size="sm" variant="outline">
-                    View Details
+                  <Button variant="ghost" size="sm" onClick={() => { setEditingSyllabus(record); setIsFormOpen(true); }}>
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDeleteSyllabus(record.id)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                   <Button size="sm" variant="outline">
                     Update Progress
@@ -370,6 +403,13 @@ export default function SyllabusPage() {
           </CardContent>
         </Card>
       )}
+
+      <SyllabusForm
+        isOpen={isFormOpen}
+        onClose={() => { setIsFormOpen(false); setEditingSyllabus(null); }}
+        syllabusToEdit={editingSyllabus}
+        onSave={handleSaveSyllabus}
+      />
     </div>
   );
 }

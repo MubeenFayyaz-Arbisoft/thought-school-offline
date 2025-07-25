@@ -11,17 +11,22 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  FileText
+  FileText,
+  Edit,
+  Trash2
 } from "lucide-react";
 import { TeacherStorage } from "@/lib/storage";
 import { Teacher, SalaryRecord } from "@/types";
 import { useToast } from "@/hooks/use-toast";
+import { SalaryForm } from "@/components/forms/SalaryForm";
 
 export default function Salary() {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [salaryRecords, setSalaryRecords] = useState<SalaryRecord[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingSalary, setEditingSalary] = useState<SalaryRecord | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -49,6 +54,26 @@ export default function Salary() {
     }));
     
     setSalaryRecords(sampleSalaryRecords);
+  };
+
+  const handleSaveSalary = (salary: SalaryRecord) => {
+    if (editingSalary) {
+      setSalaryRecords(prev => prev.map(s => s.id === salary.id ? salary : s));
+    } else {
+      setSalaryRecords(prev => [...prev, salary]);
+    }
+    setIsFormOpen(false);
+    setEditingSalary(null);
+  };
+
+  const handleDeleteSalary = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this salary record?")) {
+      setSalaryRecords(prev => prev.filter(s => s.id !== id));
+      toast({
+        title: "Success",
+        description: "Salary record deleted successfully",
+      });
+    }
   };
 
   const filteredRecords = salaryRecords.filter(record => {
@@ -122,7 +147,7 @@ export default function Salary() {
             Manage teacher salaries and payroll
           </p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">
+        <Button onClick={() => setIsFormOpen(true)} className="bg-primary hover:bg-primary/90">
           <Plus className="h-4 w-4 mr-2" />
           Add Salary Record
         </Button>
@@ -259,6 +284,17 @@ export default function Salary() {
                   </div>
                   
                   <div className="flex gap-2">
+                    <Button variant="ghost" size="sm" onClick={() => { setEditingSalary(record); setIsFormOpen(true); }}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteSalary(record.id)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                     {record.status === 'pending' && (
                       <Button
                         onClick={() => handleMarkAsPaid(record.id)}
@@ -292,6 +328,13 @@ export default function Salary() {
           </CardContent>
         </Card>
       )}
+
+      <SalaryForm
+        isOpen={isFormOpen}
+        onClose={() => { setIsFormOpen(false); setEditingSalary(null); }}
+        salaryToEdit={editingSalary}
+        onSave={handleSaveSalary}
+      />
     </div>
   );
 }

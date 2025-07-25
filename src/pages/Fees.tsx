@@ -12,30 +12,23 @@ import {
   User,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  Edit,
+  Trash2
 } from "lucide-react";
 import { StudentStorage, ClassStorage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
+import { FeeForm } from "@/components/forms/FeeForm";
+import { FeeRecord } from "@/types";
 
-interface FeeRecord {
-  id: string;
-  studentId: string;
-  studentName: string;
-  classId: string;
-  feeType: string;
-  amount: number;
-  dueDate: string;
-  paidDate?: string;
-  status: 'paid' | 'pending' | 'overdue';
-  paymentMethod?: string;
-  receiptNumber?: string;
-}
 
 export default function Fees() {
   const [feeRecords, setFeeRecords] = useState<FeeRecord[]>([]);
   const [filteredRecords, setFilteredRecords] = useState<FeeRecord[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingFee, setEditingFee] = useState<FeeRecord | null>(null);
   const { toast } = useToast();
 
   const students = StudentStorage.getAll();
@@ -52,14 +45,15 @@ export default function Fees() {
   const loadFeeRecords = () => {
     // Generate sample fee records for first 20 students
     const sampleRecords: FeeRecord[] = [];
-    const feeTypes = ['Tuition Fee', 'Transport Fee', 'Activity Fee', 'Library Fee', 'Lab Fee'];
+    const feeTypes = ['tuition', 'transport', 'books', 'uniform', 'other'] as const;
+    const paymentMethods = ['cash', 'bank', 'online'] as const;
     
     students.slice(0, 20).forEach((student, index) => {
       const feeType = feeTypes[index % feeTypes.length];
-      const amount = feeType === 'Tuition Fee' ? 5000 : 
-                    feeType === 'Transport Fee' ? 1500 :
-                    feeType === 'Activity Fee' ? 800 :
-                    feeType === 'Library Fee' ? 300 : 500;
+      const amount = feeType === 'tuition' ? 5000 : 
+                    feeType === 'transport' ? 1500 :
+                    feeType === 'books' ? 800 :
+                    feeType === 'uniform' ? 300 : 500;
       
       const dueDate = new Date();
       dueDate.setMonth(dueDate.getMonth() + 1);
@@ -71,14 +65,19 @@ export default function Fees() {
         id: (index + 1).toString(),
         studentId: student.id,
         studentName: student.name,
-        classId: student.classId,
+        className: student.className,
         feeType,
         amount,
         dueDate: dueDate.toISOString().split('T')[0],
+        month: new Date().toLocaleDateString('en-US', { month: 'long' }),
+        year: new Date().getFullYear(),
         status: isPaid ? 'paid' : isOverdue ? 'overdue' : 'pending',
-        paidDate: isPaid ? new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : undefined,
-        paymentMethod: isPaid ? ['Cash', 'Card', 'Bank Transfer'][Math.floor(Math.random() * 3)] : undefined,
-        receiptNumber: isPaid ? `RCP${(index + 1).toString().padStart(4, '0')}` : undefined,
+        paymentDate: isPaid ? new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : undefined,
+        paymentMethod: isPaid ? paymentMethods[Math.floor(Math.random() * paymentMethods.length)] : undefined,
+        collectedBy: isPaid ? 'Admin' : undefined,
+        description: `${feeType.charAt(0).toUpperCase() + feeType.slice(1)} fee for ${student.name}`,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
       
       sampleRecords.push(record);
@@ -94,7 +93,7 @@ export default function Fees() {
       filtered = filtered.filter(record =>
         record.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         record.feeType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        record.receiptNumber?.toLowerCase().includes(searchTerm.toLowerCase())
+        record.description?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -103,6 +102,26 @@ export default function Fees() {
     }
 
     setFilteredRecords(filtered);
+  };
+
+  const handleSaveFee = (fee: FeeRecord) => {
+    if (editingFee) {
+      setFeeRecords(prev => prev.map(f => f.id === fee.id ? fee : f));
+    } else {
+      setFeeRecords(prev => [...prev, fee]);
+    }
+    setIsFormOpen(false);
+    setEditingFee(null);
+  };
+
+  const handleDeleteFee = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this fee record?")) {
+      setFeeRecords(prev => prev.filter(f => f.id !== id));
+      toast({
+        title: "Success",
+        description: "Fee record deleted successfully",
+      });
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -123,9 +142,8 @@ export default function Fees() {
     }
   };
 
-  const getClassName = (classId: string) => {
-    const classData = classes.find(c => c.id === classId);
-    return classData ? classData.name : "Unknown Class";
+  const getClassName = (className: string) => {
+    return className || "Unknown Class";
   };
 
   const totalAmount = feeRecords.reduce((sum, record) => sum + record.amount, 0);
@@ -145,7 +163,7 @@ export default function Fees() {
             Manage student fees and payments
           </p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">
+        <Button onClick={() => setIsFormOpen(true)} className="bg-primary hover:bg-primary/90">
           <Plus className="h-4 w-4 mr-2" />
           Add Fee Record
         </Button>
@@ -257,13 +275,13 @@ export default function Fees() {
                     <div>
                       <h3 className="font-semibold text-foreground">{record.studentName}</h3>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                        <span>{getClassName(record.classId)}</span>
+                        <span>{getClassName(record.className)}</span>
                         <span>•</span>
-                        <span>{record.feeType}</span>
-                        {record.receiptNumber && (
+                        <span>{record.feeType.charAt(0).toUpperCase() + record.feeType.slice(1)} Fee</span>
+                        {record.description && (
                           <>
                             <span>•</span>
-                            <span>Receipt: {record.receiptNumber}</span>
+                            <span>{record.description}</span>
                           </>
                         )}
                       </div>
@@ -282,10 +300,10 @@ export default function Fees() {
                       <Calendar className="h-4 w-4" />
                       <span>Due: {new Date(record.dueDate).toLocaleDateString()}</span>
                     </div>
-                    {record.paidDate && (
+                    {record.paymentDate && (
                       <div className="flex items-center gap-1">
                         <CheckCircle className="h-4 w-4" />
-                        <span>Paid: {new Date(record.paidDate).toLocaleDateString()}</span>
+                        <span>Paid: {new Date(record.paymentDate).toLocaleDateString()}</span>
                       </div>
                     )}
                     {record.paymentMethod && (
@@ -295,11 +313,24 @@ export default function Fees() {
                       </div>
                     )}
                   </div>
-                  {record.status !== 'paid' && (
-                    <Button size="sm" className="bg-primary hover:bg-primary/90">
-                      Mark as Paid
+                  <div className="flex gap-2">
+                    <Button variant="ghost" size="sm" onClick={() => { setEditingFee(record); setIsFormOpen(true); }}>
+                      <Edit className="h-4 w-4" />
                     </Button>
-                  )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteFee(record.id)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                    {record.status !== 'paid' && (
+                      <Button size="sm" className="bg-primary hover:bg-primary/90">
+                        Mark as Paid
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -320,6 +351,13 @@ export default function Fees() {
           </CardContent>
         </Card>
       )}
+
+      <FeeForm
+        isOpen={isFormOpen}
+        onClose={() => { setIsFormOpen(false); setEditingFee(null); }}
+        feeToEdit={editingFee}
+        onSave={handleSaveFee}
+      />
     </div>
   );
 }

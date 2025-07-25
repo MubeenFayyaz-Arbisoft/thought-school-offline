@@ -7,23 +7,19 @@ import {
   Bell,
   Calendar,
   User,
-  Eye
+  Eye,
+  Edit,
+  Trash2
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { NoticeForm } from "@/components/forms/NoticeForm";
+import { Notice } from "@/types";
 
-interface Notice {
-  id: string;
-  title: string;
-  content: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  targetAudience: 'all' | 'students' | 'teachers' | 'parents';
-  createdBy: string;
-  createdAt: string;
-  expiryDate?: string;
-}
 
 export default function Notices() {
   const [notices, setNotices] = useState<Notice[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingNotice, setEditingNotice] = useState<Notice | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -70,6 +66,26 @@ export default function Notices() {
     setNotices(sampleNotices);
   }, []);
 
+  const handleSaveNotice = (notice: Notice) => {
+    if (editingNotice) {
+      setNotices(prev => prev.map(n => n.id === notice.id ? notice : n));
+    } else {
+      setNotices(prev => [...prev, notice]);
+    }
+    setIsFormOpen(false);
+    setEditingNotice(null);
+  };
+
+  const handleDeleteNotice = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this notice?")) {
+      setNotices(prev => prev.filter(n => n.id !== id));
+      toast({
+        title: "Success",
+        description: "Notice deleted successfully",
+      });
+    }
+  };
+
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'urgent': return 'destructive';
@@ -103,7 +119,7 @@ export default function Notices() {
             Manage school notices and announcements
           </p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">
+        <Button onClick={() => setIsFormOpen(true)} className="bg-primary hover:bg-primary/90">
           <Plus className="h-4 w-4 mr-2" />
           Create Notice
         </Button>
@@ -205,8 +221,16 @@ export default function Notices() {
                   </div>
                 </div>
                 <div className="flex gap-1">
-                  <Button variant="ghost" size="sm">
-                    <Eye className="h-4 w-4" />
+                  <Button variant="ghost" size="sm" onClick={() => { setEditingNotice(notice); setIsFormOpen(true); }}>
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDeleteNotice(notice.id)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
@@ -229,6 +253,13 @@ export default function Notices() {
           </CardContent>
         </Card>
       )}
+
+      <NoticeForm
+        isOpen={isFormOpen}
+        onClose={() => { setIsFormOpen(false); setEditingNotice(null); }}
+        noticeToEdit={editingNotice}
+        onSave={handleSaveNotice}
+      />
     </div>
   );
 }
