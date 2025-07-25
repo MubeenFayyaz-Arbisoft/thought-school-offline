@@ -16,11 +16,14 @@ import {
 import { Class } from "@/types";
 import { ClassStorage, StudentStorage, TeacherStorage, SubjectStorage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
+import { ClassForm } from "@/components/forms/ClassForm";
 
 export default function Classes() {
   const [classes, setClasses] = useState<Class[]>([]);
   const [filteredClasses, setFilteredClasses] = useState<Class[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingClass, setEditingClass] = useState<Class | null>(null);
   const { toast } = useToast();
 
   const students = StudentStorage.getAll();
@@ -93,7 +96,7 @@ export default function Classes() {
             Manage class structure and sections
           </p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">
+        <Button onClick={() => setIsFormOpen(true)} className="bg-primary hover:bg-primary/90">
           <Plus className="h-4 w-4 mr-2" />
           Add Class
         </Button>
@@ -132,7 +135,7 @@ export default function Classes() {
                     </Badge>
                   </div>
                   <div className="flex gap-1">
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" onClick={() => { setEditingClass(cls); setIsFormOpen(true); }}>
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button
@@ -232,6 +235,13 @@ export default function Classes() {
           </CardContent>
         </Card>
       )}
+
+      <ClassForm
+        isOpen={isFormOpen}
+        onClose={() => { setIsFormOpen(false); setEditingClass(null); }}
+        classToEdit={editingClass}
+        onSave={loadClasses}
+      />
     </div>
   );
 }

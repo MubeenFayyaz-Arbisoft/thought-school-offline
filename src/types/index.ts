@@ -6,6 +6,7 @@ export interface Student {
   address: string;
   dateOfBirth: string;
   classId: string;
+  className: string;
   section: string;
   parentName: string;
   parentPhone: string;
@@ -53,7 +54,7 @@ export interface Subject {
   code: string;
   description?: string;
   teacherId?: string;
-  classes: string[];
+  classIds: string[];
   creditHours: number;
   createdAt: string;
   updatedAt: string;
@@ -84,6 +85,57 @@ export interface DashboardStats {
   unpaidSalaries: number;
   studentsPresent: number;
   studentsAbsent: number;
+}
+
+export interface Notice {
+  id: string;
+  title: string;
+  content: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  targetAudience: 'all' | 'students' | 'teachers' | 'parents';
+  createdBy: string;
+  createdAt: string;
+  expiryDate?: string;
+}
+
+export interface Syllabus {
+  id: string;
+  title: string;
+  description: string;
+  subjectId: string;
+  teacherId: string;
+  classIds: string[];
+  grade: string;
+  targetType: 'weekly' | 'monthly';
+  startDate: string;
+  endDate: string;
+  topics: string[];
+  learningObjectives: string[];
+  assessmentMethods: string[];
+  resources: string[];
+  status: 'planned' | 'in-progress' | 'completed' | 'delayed';
+  progressPercentage: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FeeRecord {
+  id: string;
+  studentId: string;
+  studentName: string;
+  className: string;
+  feeType: 'tuition' | 'books' | 'uniform' | 'diary' | 'transport' | 'other';
+  amount: number;
+  dueDate: string;
+  month: string;
+  year: number;
+  status: 'pending' | 'paid' | 'overdue' | 'partial';
+  paymentMethod?: 'cash' | 'bank' | 'online';
+  paymentDate?: string;
+  collectedBy?: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Re-export additional types

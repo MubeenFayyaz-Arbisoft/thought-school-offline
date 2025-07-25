@@ -15,11 +15,14 @@ import {
 import { Subject } from "@/types";
 import { SubjectStorage, ClassStorage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
+import { SubjectForm } from "@/components/forms/SubjectForm";
 
 export default function Subjects() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [filteredSubjects, setFilteredSubjects] = useState<Subject[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
   const { toast } = useToast();
 
   const classes = ClassStorage.getAll();
@@ -70,7 +73,7 @@ export default function Subjects() {
             Manage subjects and curriculum
           </p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">
+        <Button onClick={() => setIsFormOpen(true)} className="bg-primary hover:bg-primary/90">
           <Plus className="h-4 w-4 mr-2" />
           Add Subject
         </Button>
@@ -102,11 +105,11 @@ export default function Subjects() {
                   <Badge variant="outline" className="mt-1">
                     {subject.code}
                   </Badge>
-                </div>
-                <div className="flex gap-1">
-                  <Button variant="ghost" size="sm">
-                    <Edit className="h-4 w-4" />
-                  </Button>
+              </div>
+              <div className="flex gap-1">
+                <Button variant="ghost" size="sm" onClick={() => { setEditingSubject(subject); setIsFormOpen(true); }}>
+                  <Edit className="h-4 w-4" />
+                </Button>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -125,7 +128,7 @@ export default function Subjects() {
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Users className="h-4 w-4" />
-                  <span className="truncate">{getClassNames(subject.classes)}</span>
+                  <span className="truncate">{getClassNames(subject.classIds)}</span>
                 </div>
               </div>
               {subject.description && (
@@ -151,6 +154,13 @@ export default function Subjects() {
           </CardContent>
         </Card>
       )}
+
+      <SubjectForm
+        isOpen={isFormOpen}
+        onClose={() => { setIsFormOpen(false); setEditingSubject(null); }}
+        subjectToEdit={editingSubject}
+        onSave={loadSubjects}
+      />
     </div>
   );
 }

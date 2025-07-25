@@ -35,7 +35,12 @@ export function StudentForm({ student, onSave, onCancel }: StudentFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    const selectedClass = classes.find(c => c.id === formData.classId);
+    const studentData = {
+      ...formData,
+      className: selectedClass?.name || 'Unknown Class'
+    };
+    onSave(studentData);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
