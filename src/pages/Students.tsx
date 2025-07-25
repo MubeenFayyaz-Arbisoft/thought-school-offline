@@ -121,7 +121,7 @@ export default function Students() {
         <div>
           <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
             <Users className="h-8 w-8" />
-            Students Management
+           Main Students Management
           </h1>
           <p className="text-muted-foreground mt-1">
             Manage student records and information
