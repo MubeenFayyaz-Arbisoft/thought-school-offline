@@ -299,7 +299,7 @@ export function SyllabusForm({ isOpen, onClose, syllabusToEdit, onSave }: Syllab
             </div>
             <div className="flex flex-wrap gap-2">
               {formData.topics.map((topic, index) => (
-                <div key={index} className="bg-secondary px-2 py-1 rounded text-sm flex items-center gap-1">
+                <div key={index} className="addTopicSyllabus bg-secondary px-2 py-1 rounded text-sm flex items-center gap-1">
                   {topic}
                   <button type="button" onClick={() => removeFromArray('topics', index)} className="ml-1 text-red-500">×</button>
                 </div>
@@ -321,7 +321,7 @@ export function SyllabusForm({ isOpen, onClose, syllabusToEdit, onSave }: Syllab
             </div>
             <div className="flex flex-wrap gap-2">
               {formData.learningObjectives.map((objective, index) => (
-                <div key={index} className="bg-secondary px-2 py-1 rounded text-sm flex items-center gap-1">
+                <div key={index} className="addTopicSyllabus bg-secondary px-2 py-1 rounded text-sm flex items-center gap-1">
                   {objective}
                   <button type="button" onClick={() => removeFromArray('learningObjectives', index)} className="ml-1 text-red-500">×</button>
                 </div>
