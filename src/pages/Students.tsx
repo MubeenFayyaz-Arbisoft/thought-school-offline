@@ -98,16 +98,16 @@ export default function Students() {
     setIsFormOpen(true);
   };
 
-  const handleDeleteStudent = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this student?")) {
-      StudentStorage.delete(id);
-      loadStudents();
-      toast({
-        title: "Success",
-        description: "Student deleted successfully",
-      });
-    }
-  };
+const handleDeleteStudent = (id: string) => {
+  if (window.confirm("Are you sure you want to delete this student?")) {
+    StudentStorage.delete(id); // synchronous
+    loadStudents(); // must update list correctly
+    toast({
+      title: "Success",
+      description: "Student deleted successfully",
+    });
+  }
+};
 
   const getClassName = (classId: string) => {
     const classData = classes.find(c => c.id === classId);
